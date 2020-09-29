@@ -1,10 +1,11 @@
-package com.example.mediaplayer;
+package com.example.mediaplayer.songsdb;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.example.mediaplayer.GUID;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class SongsDB {
     private static SongsDBHelper mDbHelper;   //采用单例模式
     private static SongsDB instance = new SongsDB();
 
-    public static SongsDB getWordsDB() {
+    public static SongsDB getSongsDB() {
         return SongsDB.instance;
     }
 
@@ -33,13 +34,13 @@ public class SongsDB {
     }
 
     //获得单个单词的全部信息
-    public Songs.SongDescription getSingleWord(String id) {
+    public Songs.SongDescription getSingleSong(String id) {
         String sheet="";
         String path="";
         String name="";
         String lyric_path="";
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sql="select * from words where _ID= ? ";
+        String sql="select * from songs where _ID= ? ";
         Cursor c=db.rawQuery(sql,new String[]{id});
         if(c.moveToNext()){
             sheet= c.getString(1);
@@ -54,7 +55,7 @@ public class SongsDB {
     }
 
     //得到全部单词列表
-    public ArrayList<Map<String, String>> getAllWords() {
+    public ArrayList<Map<String, String>> getAllSongs() {
         if (mDbHelper == null) {
             Log.v(TAG, "WordsDB::getAllWords()");
             return null;
@@ -82,7 +83,7 @@ public class SongsDB {
                 null,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                null                                 // The sort order
+                sortOrder                                 // The sort order
         );
 
         return ConvertCursor2SongList(c);
@@ -122,9 +123,15 @@ public class SongsDB {
     //查找
     public ArrayList<Map<String, String>> SearchUseSql(String strSongSearch) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sql = "select * from songs where word like ? order by word desc";
+        String sql = "select * from songs where name like ? order by name desc";
         Cursor c = db.rawQuery(sql, new String[]{"%" + strSongSearch + "%"});
         return ConvertCursor2SongList(c);
+    }
+    //更新单词
+    public void UpdateUseSql(String strId, String strName, String strPath, String strl_Path) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String sql = "update songs set name=?,path=?,lyric_path=? where _id=?";
+        db.execSQL(sql, new String[]{strName,strPath,strl_Path, strId});
     }
 
 

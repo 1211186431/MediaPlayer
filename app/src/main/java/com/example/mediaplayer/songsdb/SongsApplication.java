@@ -1,4 +1,4 @@
-package com.example.mediaplayer;
+package com.example.mediaplayer.songsdb;
 
 import android.app.Application;
 import android.content.Context;
