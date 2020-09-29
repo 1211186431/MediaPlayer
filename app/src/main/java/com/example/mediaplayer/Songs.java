@@ -9,7 +9,8 @@ public class Songs {
         public static final String TABLE_NAME = "songs";//表名
         public static final String COLUMN_NAME_sheet = "sheet";//歌单
         public static final String COLUMN_NAME_path = "path";//路径
-        public static final String COLUMN_NAME_name = "name";//路径
+        public static final String COLUMN_NAME_name = "name";//名字
+        public static final String COLUMN_NAME_lyric = "lyric_path";//歌词路径
     }
 
 
@@ -19,12 +20,14 @@ public class Songs {
         public String sheet;
         public String path;
         public String name;
+        public String lyric_path;
 
-        public SongDescription(String id, String sheet, String path, String name) {
+        public SongDescription(String id, String sheet, String path, String name, String lyric_path) {
             this.id = id;
             this.sheet = sheet;
             this.path = path;
             this.name = name;
+            this.lyric_path = lyric_path;
         }
 
         public String getId() {
@@ -58,8 +61,15 @@ public class Songs {
         public void setName(String name) {
             this.name = name;
         }
-    }
 
+        public String getLyric_path() {
+            return lyric_path;
+        }
+
+        public void setLyric_path(String lyric_path) {
+            this.lyric_path = lyric_path;
+        }
+    }
 
 
 }

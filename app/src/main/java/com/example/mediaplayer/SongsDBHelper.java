@@ -8,7 +8,7 @@ public class SongsDBHelper extends SQLiteOpenHelper  {
     private final static String DATABASE_NAME = "songsdb";//数据库名字
     private final static int DATABASE_VERSION = 1;
 
-    private final static String SQL_CREATE_DATABASE = "CREATE TABLE " + Songs.Song.TABLE_NAME + " (" + Songs.Song._ID + " VARCHAR(32) PRIMARY KEY NOT NULL," + Songs.Song.COLUMN_NAME_sheet + " TEXT UNIQUE NOT NULL," + Songs.Song.COLUMN_NAME_path + " TEXT UNIQUE NOT NULL,"+ Songs.Song.COLUMN_NAME_name+" TEXT UNIQUE NOT NULL)";
+    private final static String SQL_CREATE_DATABASE = "CREATE TABLE " + Songs.Song.TABLE_NAME + " (" + Songs.Song._ID + " VARCHAR(32) PRIMARY KEY NOT NULL," + Songs.Song.COLUMN_NAME_sheet + " TEXT UNIQUE NOT NULL," + Songs.Song.COLUMN_NAME_path + " TEXT UNIQUE NOT NULL,"+ Songs.Song.COLUMN_NAME_name+" TEXT UNIQUE NOT NULL,"+Songs.Song.COLUMN_NAME_lyric+" TEXT)";
     private final static String SQL_DELETE_DATABASE = "DROP TABLE IF EXISTS " + Songs.Song.TABLE_NAME;
 
 

@@ -37,6 +37,7 @@ public class SongsDB {
         String sheet="";
         String path="";
         String name="";
+        String lyric_path="";
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String sql="select * from words where _ID= ? ";
         Cursor c=db.rawQuery(sql,new String[]{id});
@@ -44,7 +45,8 @@ public class SongsDB {
             sheet= c.getString(1);
             path=c.getString(2);
             name=c.getString(3);
-            Songs.SongDescription SongDescription=new Songs.SongDescription(id, sheet,path, name);
+            lyric_path=c.getString(4);
+            Songs.SongDescription SongDescription=new Songs.SongDescription(id, sheet,path, name,lyric_path);
             return SongDescription;
         }
         else
@@ -64,7 +66,8 @@ public class SongsDB {
                 Songs.Song._ID,
                 Songs.Song.COLUMN_NAME_sheet,
                 Songs.Song.COLUMN_NAME_path,
-                Songs.Song.COLUMN_NAME_name
+                Songs.Song.COLUMN_NAME_name,
+                Songs.Song.COLUMN_NAME_lyric
         };
 
         //排序
@@ -79,7 +82,7 @@ public class SongsDB {
                 null,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                null                                 // The sort order
         );
 
         return ConvertCursor2SongList(c);
@@ -94,17 +97,18 @@ public class SongsDB {
             map.put(Songs.Song.COLUMN_NAME_sheet, cursor.getString(cursor.getColumnIndex(Songs.Song.COLUMN_NAME_sheet)));
             map.put(Songs.Song.COLUMN_NAME_path, cursor.getString(cursor.getColumnIndex(Songs.Song.COLUMN_NAME_path)));
             map.put(Songs.Song.COLUMN_NAME_name, cursor.getString(cursor.getColumnIndex(Songs.Song.COLUMN_NAME_name)));
+            map.put(Songs.Song.COLUMN_NAME_lyric, cursor.getString(cursor.getColumnIndex(Songs.Song.COLUMN_NAME_lyric)));
             result.add(map);
         }
         return result;
     }
 
     //增加单词
-    public  void InsertUserSql(String strWord, String strMeaning, String strSample) {
-        String sql = "insert into  songs(_id,word,meaning,sample) values(?,?,?,?)";
+    public  void InsertUserSql(String strSheet, String strPath, String strName,String strLyric) {
+        String sql = "insert into  songs(_id,sheet,path,name,lyric_path) values(?,?,?,?,?)";
         //Gets the data repository in write mode*/
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.execSQL(sql, new String[]{GUID.getGUID(),strWord, strMeaning, strSample});
+        db.execSQL(sql, new String[]{GUID.getGUID(),strSheet, strPath, strName,strLyric});
     }
 
     //删除单词
@@ -116,10 +120,10 @@ public class SongsDB {
     }
 
     //查找
-    public ArrayList<Map<String, String>> SearchUseSql(String strWordSearch) {
+    public ArrayList<Map<String, String>> SearchUseSql(String strSongSearch) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String sql = "select * from songs where word like ? order by word desc";
-        Cursor c = db.rawQuery(sql, new String[]{"%" + strWordSearch + "%"});
+        Cursor c = db.rawQuery(sql, new String[]{"%" + strSongSearch + "%"});
         return ConvertCursor2SongList(c);
     }
 
