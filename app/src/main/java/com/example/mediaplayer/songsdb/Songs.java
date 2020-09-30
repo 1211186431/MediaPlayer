@@ -12,6 +12,11 @@ public class Songs {
         public static final String COLUMN_NAME_name = "name";//名字
         public static final String COLUMN_NAME_lyric = "lyric_path";//歌词路径
     }
+    public static abstract class sheet implements BaseColumns {
+        public static final String TABLE_NAME = "sheet";//表名
+        public static final String COLUMN_NAME_sname = "sname";//名字
+
+    }
 
 
     //每个的描述
@@ -68,6 +73,31 @@ public class Songs {
 
         public void setLyric_path(String lyric_path) {
             this.lyric_path = lyric_path;
+        }
+    }
+    public static class SheetDescription{
+        public String id;
+        public String sname;
+
+        public SheetDescription(String id, String sname) {
+            this.id = id;
+            this.sname = sname;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getSname() {
+            return sname;
+        }
+
+        public void setSname(String sname) {
+            this.sname = sname;
         }
     }
 
