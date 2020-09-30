@@ -74,7 +74,7 @@ public class SheetDB {
                 null,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                null                                 // The sort order
         );
 
         return ConvertCursor2SongList(c);
@@ -104,8 +104,11 @@ public class SheetDB {
     public void DeleteUseSql(String strId) {
         String sql = " DELETE FROM " + Songs.sheet.TABLE_NAME+
                 "  WHERE _Id= ?";
+        String sql2 = " DELETE FROM " + Songs.Song.TABLE_NAME+
+                "  WHERE sheet= ?";
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.execSQL(sql, new String[]{strId});
+        db.execSQL(sql2,new String[]{strId});
     }
 
     //查找
@@ -115,7 +118,7 @@ public class SheetDB {
         Cursor c = db.rawQuery(sql, new String[]{"%" + strSongSearch + "%"});
         return ConvertCursor2SongList(c);
     }
-    //更新单词
+    //更新
     public void UpdateUseSql(String strId, String strName) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String sql = "update sheet set sname=? where _id=?";

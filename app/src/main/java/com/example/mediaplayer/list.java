@@ -42,13 +42,16 @@ public class list extends AppCompatActivity {
     EditText e2 ;
     EditText e3 ;
     Boolean isE2=true;
+    String sheet_id="";
     private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        Intent intent=getIntent();
+        sheet_id=intent.getStringExtra("sheet_id");
         SongsDB songsDB=new SongsDB(this);
-        ArrayList<Map<String, String>> items = songsDB.getAllSongs();
+        ArrayList<Map<String, String>> items = songsDB.getAllSongs(sheet_id);
         SimpleAdapter adapter = new SimpleAdapter(list.this, items, R.layout.item,
                 new String[]{Songs.Song._ID, Songs.Song.COLUMN_NAME_name},
                 new int[]{R.id.textId, R.id.textViewWord});
@@ -211,7 +214,7 @@ public class list extends AppCompatActivity {
     }
     public void refreshSongsList(SongsDB songsDB){  //刷新界面
         ListView list = findViewById(R.id.list);
-        ArrayList<Map<String, String>> items = songsDB.getAllSongs();
+        ArrayList<Map<String, String>> items = songsDB.getAllSongs(sheet_id);
         SimpleAdapter adapter = new SimpleAdapter(this, items, R.layout.item,
                 new String[]{Songs.Song._ID, Songs.Song.COLUMN_NAME_name},
                 new int[]{R.id.textId, R.id.textViewWord});
@@ -270,7 +273,7 @@ public class list extends AppCompatActivity {
                         if (e1.getText().toString().equals("") || e2.getText().toString().equals("") || e3.getText().toString().equals("")) {
                             Toast.makeText(list.this, "添加失败", Toast.LENGTH_LONG).show();
                         } else {
-                            songsDB.InsertUserSql("2",e2.getText().toString(),e1.getText().toString(),e3.getText().toString());
+                            songsDB.InsertUserSql(sheet_id,e2.getText().toString(),e1.getText().toString(),e3.getText().toString());
                             refreshSongsList(songsDB);
                             Toast.makeText(list.this, "添加成功", Toast.LENGTH_LONG).show();
                         }
@@ -289,7 +292,7 @@ public class list extends AppCompatActivity {
 
         final SongsDB songsDB=new SongsDB(list.this);
         final ListView   listView = (ListView) findViewById(R.id.list);
-        ArrayList<Map<String, String>> items = songsDB.getAllSongs();
+        ArrayList<Map<String, String>> items = songsDB.getAllSongs(sheet_id);
         SimpleAdapter adapter = new SimpleAdapter(list.this, items, R.layout.item,
                 new String[]{Songs.Song._ID, Songs.Song.COLUMN_NAME_name},
                 new int[]{R.id.textId, R.id.textViewWord});
@@ -332,6 +335,21 @@ public class list extends AppCompatActivity {
                 }
                 return true;
 
+            }
+        });
+
+        listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView txtId=view.findViewById(R.id.textId);
+                String id=txtId.getText().toString();
+
+                Intent intent=
+                        new Intent(list.this,sheet.class);
+                intent.putExtra("song_id",id);
+                Log.v("Tag","1+"+id);
+                setResult(1,intent);
+                finish();
             }
         });
     }

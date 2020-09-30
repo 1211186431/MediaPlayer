@@ -55,7 +55,7 @@ public class SongsDB {
     }
 
     //得到全部单词列表
-    public ArrayList<Map<String, String>> getAllSongs() {
+    public ArrayList<Map<String, String>> getAllSongs(String sheet) {
         if (mDbHelper == null) {
             Log.v(TAG, "WordsDB::getAllWords()");
             return null;
@@ -70,7 +70,8 @@ public class SongsDB {
                 Songs.Song.COLUMN_NAME_name,
                 Songs.Song.COLUMN_NAME_lyric
         };
-
+        String where = "sheet = ?";
+        String[] params = {sheet};
         //排序
         String sortOrder =
                 Songs.Song.COLUMN_NAME_name + " DESC";
@@ -79,8 +80,8 @@ public class SongsDB {
         Cursor c = db.query(
                 Songs.Song.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
-                null,                                // The columns for the WHERE clause
-                null,                            // The values for the WHERE clause
+                where,                                // The columns for the WHERE clause
+                params,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 sortOrder                                 // The sort order
@@ -104,7 +105,7 @@ public class SongsDB {
         return result;
     }
 
-    //增加单词
+    //增加
     public  void InsertUserSql(String strSheet, String strPath, String strName,String strLyric) {
         String sql = "insert into  songs(_id,sheet,path,name,lyric_path) values(?,?,?,?,?)";
         //Gets the data repository in write mode*/
@@ -112,7 +113,7 @@ public class SongsDB {
         db.execSQL(sql, new String[]{GUID.getGUID(),strSheet, strPath, strName,strLyric});
     }
 
-    //删除单词
+    //删除
     public void DeleteUseSql(String strId) {
         String sql = " DELETE FROM " + Songs.Song.TABLE_NAME+
                 "  WHERE _Id= ?";

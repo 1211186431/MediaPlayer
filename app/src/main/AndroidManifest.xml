@@ -14,16 +14,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".list">
-
-        </activity>
+        <activity android:name=".sheet"></activity>
+        <activity android:name=".list"></activity>
         <activity android:name=".insert" />
+
         <service
             android:name=".PlayService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            ><!--再用intent跳转到这个activity时，就不会重新实例化此activity了。  android:launchMode="singleTask" android:launchMode="singleTask"-->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

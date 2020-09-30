@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.mediaplayer.songsdb.Songs;
+import com.example.mediaplayer.songsdb.SongsDB;
 
 import java.io.IOException;
 
@@ -25,12 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private String path_name = "/storage/emulated/0/lujing/Carly Rae Jepsen - I Really Like You.mp3";
     String music_name = "Carly Rae Jepsen - I Really Like You";
     String music_state = "正在播放";
+    String song_id="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+Log.v("Tag","onCreate");
         mediaPlayer = new MediaPlayer();
 
         /*如果需要播放完停止，则需要注册OnCompletionListener监听器
@@ -138,10 +143,25 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent2=new Intent(MainActivity.this,list.class);
-                startActivity(intent2);
+                Intent intent2=new Intent(MainActivity.this,sheet.class);
+                startActivityForResult(intent2,0);
             }
         });
+
+
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        SongsDB songsdb=new SongsDB(MainActivity.this);
+        Log.v("Tag",requestCode+" "+resultCode);
+        if(requestCode==0 && resultCode==1){
+            song_id=data.getStringExtra("song_id");
+            Log.v("Tag","2+"+song_id);
+            Songs.SongDescription song=songsdb.getSingleSong(song_id);
+            Toast.makeText(this,song.getName(),Toast.LENGTH_LONG).show();
+        }
     }
 
 }
