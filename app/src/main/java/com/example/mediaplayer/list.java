@@ -347,6 +347,7 @@ public class list extends AppCompatActivity {
                 Intent intent=
                         new Intent(list.this,sheet.class);
                 intent.putExtra("song_id",id);
+                intent.putExtra("sheet_id",sheet_id);
                 Log.v("Tag","1+"+id);
                 setResult(1,intent);
                 finish();

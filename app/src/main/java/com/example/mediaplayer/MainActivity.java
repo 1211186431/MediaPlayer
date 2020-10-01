@@ -9,12 +9,14 @@ import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,67 +24,147 @@ import com.example.mediaplayer.songsdb.Songs;
 import com.example.mediaplayer.songsdb.SongsDB;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "myTag";
     private MediaPlayer mediaPlayer;
-    private String path_name = "/storage/emulated/0/lujing/Carly Rae Jepsen - I Really Like You.mp3";
     String music_name = "Carly Rae Jepsen - I Really Like You";
     String music_state = "正在播放";
-    String song_id="";
+    String song_id="";                                    //初始可以随便找一个放，没有放really like you
+    String sheet_id="CC23FB90C65648D888FCC47358898A26";
+    String path = "/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.mp3";
+    SeekBar seekBar;
+    int istouch = 1;
+    ArrayList<Map<String, String>> item1;
+    ArrayList<Map<String, String>> item2;
+    //处理进度条更新
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    //更新进度
+                    int position = mediaPlayer.getCurrentPosition();
+
+                    int time = mediaPlayer.getDuration();
+                    int max = seekBar.getMax();
+                    if (istouch == 1) {
+
+                        seekBar.setProgress(position * max / time);
+
+                        double n = ((double) position) / 1000;
+                        String n2 = String.format("%.2f", n);
+                        String time2 = String.format("%.2f", ((double) time) / 1000);
+                        TextView t = (TextView) findViewById(R.id.time2);
+                        t.setText(n2 + "s / " + time2 + "s");
+                    }
+                    if (!mediaPlayer.isPlaying()) {
+                        if (position >= time) {
+                            Log.v("Tag", "over");
+                            changeSong();     //顺序 执行下一首
+                                             //随机  执行随机下一首
+                                             //单曲Loop
+                        }
+
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-Log.v("Tag","onCreate");
-        mediaPlayer = new MediaPlayer();
-
-        /*如果需要播放完停止，则需要注册OnCompletionListener监听器
-        在本示例中，用户可以选择是否循环播放，如果选择了循环播放，则播放完后会自动转到Started状态，再次播放
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                Log.v(TAG,"setOnCompletionListener");
-                mp.release();
-            }
-        });*/
-
-
-        final TextView txtLoopState = (TextView) findViewById(R.id.txtLoopState);
-
-        final Button buttonStart = (Button) findViewById(R.id.buttonStart);
-        final Button buttonPause = (Button) findViewById(R.id.buttonPause);
-        final Button buttonStop = (Button) findViewById(R.id.buttonStop);
-        final Button buttonLoop = (Button) findViewById(R.id.buttonLoop);
-
-        buttonPause.setEnabled(false);
-        buttonStop.setEnabled(false);
-        buttonLoop.setEnabled(false);
         final Intent intent = new Intent(MainActivity.this, PlayService.class);
+        intent.putExtra("music_name", music_name);
+        intent.putExtra("music_state", music_state);
+        startService(intent);
 
 
-        //开始播放
-        buttonStart.setOnClickListener(new View.OnClickListener() {
+        Button buttonLoop=findViewById(R.id.buttonLoop);
+        //循环播放
+        buttonLoop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.v(TAG, "Looping");
+                boolean loop = mediaPlayer.isLooping();
+                mediaPlayer.setLooping(!loop);
+//                if (!loop)
+//                    txtLoopState.setText("循环播放");
+//                else
+//                    txtLoopState.setText("一次播放");
+            }
+        });
+        final Button buttonup = (Button) findViewById(R.id.buttonup);
+        final Button buttonPause = (Button) findViewById(R.id.buttonPause);
+        final Button buttondown = (Button) findViewById(R.id.buttondown);
 
-                try {
-                    mediaPlayer.reset();
-                    mediaPlayer.setDataSource("/storage/emulated/0/lujing/Carly Rae Jepsen - I Really Like You.mp3");
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                    buttonPause.setEnabled(true);
-                    buttonStop.setEnabled(true);
-                    buttonLoop.setEnabled(true);
-                    intent.putExtra("music_name", music_name);
-                    intent.putExtra("music_state", music_state);
-                    startService(intent);
-                } catch (IOException e) {
-                    e.printStackTrace();
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        mediaPlayer = new MediaPlayer();
+        init();
+
+        //上一首
+        buttonup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String,String> m=getUp(song_id);
+                String path2="";
+                if(m.isEmpty()) {
+                    path2="null";
                 }
+                else
+                    path2=m.get("path").toString();
+                Log.v("myTag",path2);
+                if(!path2.equals("null")){
+                    mediaPlayer.stop();
+                    try {
+                        mediaPlayer.reset();
+                        mediaPlayer.setDataSource(path2);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                        song_id=m.get("_id").toString();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                    Toast.makeText(MainActivity.this,"error",Toast.LENGTH_LONG).show();
+            }
+        });
 
-
+        //下一首
+        buttondown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String,String> m=getDown(song_id);
+                String path2="";
+                if(m.isEmpty()) {
+                    path2="null";
+                }
+                else
+                    path2=m.get("path").toString();
+                Log.v("myTag",path2);
+                if(!path2.equals("null")){
+                    mediaPlayer.stop();
+                    try {
+                        mediaPlayer.reset();
+                        mediaPlayer.setDataSource(path2);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                        song_id=m.get("_id").toString();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+               }
+                else
+                    Toast.makeText(MainActivity.this,"error",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -91,15 +173,9 @@ Log.v("Tag","onCreate");
             @Override
             public void onClick(View v) {
                 if (mediaPlayer.isPlaying()) {
-                    intent.putExtra("music_name", music_name);
-                    intent.putExtra("music_state", "暂停");
-                    startService(intent);
                     buttonPause.setText("Play");
                     mediaPlayer.pause();
                 } else {
-                    intent.putExtra("music_name", music_name);
-                    intent.putExtra("music_state", music_state);
-                    startService(intent);
                     buttonPause.setText("Pause");
                     mediaPlayer.start();
                 }
@@ -107,37 +183,41 @@ Log.v("Tag","onCreate");
             }
         });
 
-        //停止播放
-        buttonStop.setOnClickListener(new View.OnClickListener() {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // 当拖动条的滑块位置发生改变时触发该方法,在这里直接使用参数progress，即当前滑块代表的进度值
+                //;
+                double dest = seekBar.getProgress();
+                double time = mediaPlayer.getDuration();
+                double max = seekBar.getMax();
+                double n = (time * dest / max) / 1000;
+                String n2 = String.format("%.2f", n);
+                String time2 = String.format("%.2f", time / 1000);
+                TextView t = (TextView) findViewById(R.id.time2);
+                t.setText(n2 + "s / " + time2 + "s");
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.e("------------", "开始滑动！");
+                istouch = -1;     //不让线程走
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { //改到这里
+                int dest = seekBar.getProgress();
+                int time = mediaPlayer.getDuration();
+                int max = seekBar.getMax();
                 if (mediaPlayer.isPlaying()) {
-                    stopService(intent);
-                    mediaPlayer.stop();
+                    mediaPlayer.seekTo(time * dest / max);
                 }
-
-
+                Log.e("------------", "停止滑动！");
+                istouch = 1;
             }
         });
-
-        //循环播放
-        buttonLoop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.v(TAG, "Looping");
-
-                boolean loop = mediaPlayer.isLooping();
-                mediaPlayer.setLooping(!loop);
-
-
-                if (!loop)
-                    txtLoopState.setText("循环播放");
-                else
-                    txtLoopState.setText("一次播放");
-
-
-            }
-        });
+        init();
 
         Button btn=findViewById(R.id.test);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -152,16 +232,110 @@ Log.v("Tag","onCreate");
 
     }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  //传数据的测试
         super.onActivityResult(requestCode, resultCode, data);
         SongsDB songsdb=new SongsDB(MainActivity.this);
         Log.v("Tag",requestCode+" "+resultCode);
         if(requestCode==0 && resultCode==1){
             song_id=data.getStringExtra("song_id");
-            Log.v("Tag","2+"+song_id);
+            sheet_id=data.getStringExtra("sheet_id");
             Songs.SongDescription song=songsdb.getSingleSong(song_id);
-            Toast.makeText(this,song.getName(),Toast.LENGTH_LONG).show();
+            mediaPlayer.stop();
+            try {
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(song.getPath());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+                song_id=song.getId();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public void init() {
+        //进入Idle
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            //后台线程发送消息进行更新进度条
+            final int milliseconds = 100;
+            new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        mHandler.sendEmptyMessage(0);
+                        try {
+                            sleep(milliseconds);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }
+            }.start();
+
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public void changeSong(){   //结束时换歌
+        try {
+            mediaPlayer.reset();
+            mediaPlayer.setDataSource("/storage/emulated/0/Topic+09.mp3");
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public Map<String, String> getUp(String _id) { // 上一首
+        Map<String, String> b =new HashMap<>();
+        SongsDB songsDB=new SongsDB(this);
+        item1=songsDB.getAllSongs(sheet_id);
+        for(int i=0;i<this.item1.size();i++) {
+            if(item1.get(i).get("_id").equals(_id)) {
+                if(i-1>=0) {
+                    b=item1.get(i-1);
+                    break;
+                }
+                if(i==0){
+                    b=item1.get(item1.size()-1);
+                    break;
+                }
+            }
+        }
+        return b;
+    }
+
+    public Map<String, String> getDown(String _id) { // 下一首
+        Map<String, String> b =new HashMap<>();
+        SongsDB songsDB=new SongsDB(this);
+        item1=songsDB.getAllSongs(sheet_id);
+        Log.v("myTag",sheet_id+"  "+_id);
+        for(int i=0;i<this.item1.size();i++) {
+            if(item1.get(i).get("_id").equals(_id)) {
+                if(i+1<item1.size()) {
+                    b=item1.get(i+1);
+                    break;
+                }
+                if(i==item1.size()-1){
+                    b=item1.get(0);
+                    break;
+                }
+            }
+        }
+        return b;
     }
 
 }

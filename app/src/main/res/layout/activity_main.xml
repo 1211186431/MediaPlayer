@@ -7,18 +7,21 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtLoopState"
-        />
+        android:id="@+id/time2"
+        android:text="0s / 0s"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonStart"
-        android:text="@string/action_start"
-        android:layout_below="@id/txtLoopState"
+        android:id="@+id/buttonup"
+        android:text="上"
         />
 
     <Button
@@ -26,14 +29,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonPause"
         android:text="@string/action_pause"
-        android:layout_below="@id/buttonStart"
+        android:layout_below="@id/buttonup"
         />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonStop"
-        android:text="@string/action_stop"
+        android:id="@+id/buttondown"
+        android:text="下"
         android:layout_below="@id/buttonPause"
         />
 
@@ -42,7 +45,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonLoop"
         android:text="@string/action_loop"
-        android:layout_below="@id/buttonStop"
+        android:layout_below="@id/buttondown"
         />
 <Button
     android:layout_width="wrap_content"

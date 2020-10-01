@@ -31,6 +31,7 @@ import java.util.Map;
 
 public class sheet extends AppCompatActivity {
     EditText e1;
+    String sheet_id="";
     private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,9 +298,11 @@ public class sheet extends AppCompatActivity {
         Log.v("Tag","getIntent2");
         if(requestCode==2 && resultCode==1){
             String id=data.getStringExtra("song_id");
+             sheet_id=data.getStringExtra("sheet_id");
             Intent intent=
                     new Intent(sheet.this,MainActivity.class);
             intent.putExtra("song_id",id);
+            intent.putExtra("sheet_id",sheet_id);
             setResult(1,intent);
             finish();
         }
