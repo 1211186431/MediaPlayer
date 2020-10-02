@@ -56,7 +56,6 @@ public class LrcView extends View{
     protected void onDraw(Canvas canvas) {
 // TODO Auto-generated method stub
         super.onDraw(canvas);
-
         paint.reset();//重置画笔
         paint.setColor(nowColor);
         paint.setTextSize(textSize);

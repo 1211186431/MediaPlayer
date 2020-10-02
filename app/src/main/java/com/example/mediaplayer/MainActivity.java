@@ -23,6 +23,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mediaplayer.lrc.LrcRow;
+import com.example.mediaplayer.lrc.LrcRows;
+import com.example.mediaplayer.lrc.LrcView;
 import com.example.mediaplayer.songsdb.Songs;
 import com.example.mediaplayer.songsdb.SongsDB;
 
@@ -30,19 +33,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Stack;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LrcView.MedCallBack {
     private MediaPlayer mediaPlayer;
     String music_name = "Carly Rae Jepsen - I Really Like You";
     String music_state = "正在播放";
     Stack<String> allsong;
+
+    private boolean timeFlag = true;
+    private LrcView lrcView;
     String song_id = "";                                    //初始可以随便找一个放，没有放really like you
     String sheet_id = "";
     String path = "/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.mp3";
-    String path2="/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.lrc";
+    String Path2="/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.lrc";
     SeekBar seekBar;
     int istouch = 1;
     String i1[]={"列表"};
@@ -56,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0:
                     //更新进度
+                    int timett = mediaPlayer.getCurrentPosition();
+                    lrcView.LrcToPlayer(timett);//根据播放的进度，时时跟新歌词
                     int position = mediaPlayer.getCurrentPosition();
 
                     int time = mediaPlayer.getDuration();
@@ -188,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 istouch = 1;
             }
         });
-        init();
+        initview();
 
         Button btn = findViewById(R.id.test);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -208,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         SongsDB songsdb = new SongsDB(MainActivity.this);
         if (requestCode == 0 && resultCode == 1) {
             song_id = data.getStringExtra("song_id");
+            Path2=getPath2(song_id);
             sheet_id = data.getStringExtra("sheet_id");
             Songs.SongDescription song = songsdb.getSingleSong(song_id);
             mediaPlayer.stop();
@@ -217,8 +227,10 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 song_id = song.getId();
+                Path2=getPath2(song_id);
                 allsong.push(song_id);
                 song_name.setText(song.getName());
+                initview();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -280,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 getDown();
                 break;
         }
+        initview();
 
     }
 
@@ -317,7 +330,9 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 song_id = s.getId();
+                Path2=getPath2(song_id);
                 song_name.setText(s.getName());
+                initview();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -376,8 +391,10 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 song_id = m.get("_id").toString();
+                Path2=getPath2(song_id);
                 allsong.push(song_id);
                 song_name.setText(m.get("name"));
+                initview();
                 Log.v("Stack","----"+allsong.toString());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -411,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 song_id = m.get("_id").toString();
+                Path2=getPath2(song_id);
                 allsong.push(song_id);
                 song_name.setText(m.get("name"));
             } catch (IOException e) {
@@ -418,6 +436,35 @@ public class MainActivity extends AppCompatActivity {
             }
         } else
             Toast.makeText(MainActivity.this, "error", Toast.LENGTH_LONG).show();
+
+    }
+
+    //获取
+    public String getPath2(String song_id){
+        String p="";
+        SongsDB songsDB=new SongsDB(this);
+        Songs.SongDescription song=songsDB.getSingleSong(song_id);
+        p=song.getLyric_path();
+        return p;
+    }
+
+    //lrc
+    private void initview() {
+// TODO Auto-generated method stub
+        LrcRows lrcRows = new LrcRows();
+        List<LrcRow> list = lrcRows.BuildList(Path2);
+        lrcView = (LrcView) findViewById(R.id.mylrcview);
+        lrcView.setLrc(list);
+        lrcView.setCall(this);
+    }
+
+
+    //歌曲播放时，根据拖动跨越的行数里面的时间快进或快退带时间对应的播放进度
+    @Override
+    public void call(long time) {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo((int) time);
+        }
 
     }
 }

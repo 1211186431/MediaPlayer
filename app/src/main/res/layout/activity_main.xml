@@ -6,67 +6,87 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/song_name"
-    android:text="I realy like you"/>
-    <SeekBar
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar"/>
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="#008AD4"
+        tools:context=".MainActivity" >
+        <com.example.mediaplayer.lrc.LrcView
+            android:id="@+id/mylrcview"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            />
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/time2"
-            android:text="0s / 0s"/>
-        <Spinner
-            android:id="@+id/spring_Loop"
-            android:layout_width="wrap_content"
+            android:id="@+id/song_name"
+            android:text="good time"
+            android:textSize="30sp" />
+        <SeekBar
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/Loop2"/>
+            android:id="@+id/seekBar"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/time2"
+                android:text="0s / 0s"/>
+            <Spinner
+                android:id="@+id/spring_Loop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/Loop2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonup"
+                android:text="上"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonPause"
+                android:text="@string/action_pause"
+                android:layout_below="@id/buttonup"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttondown"
+                android:text="下"
+                android:layout_below="@id/buttonPause"
+                />
+
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="歌单"
+                android:id="@+id/test"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonup"
-            android:text="上"
-            />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonPause"
-            android:text="@string/action_pause"
-            android:layout_below="@id/buttonup"
-            />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttondown"
-            android:text="下"
-            android:layout_below="@id/buttonPause"
-            />
-
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="btn"
-            android:id="@+id/test"/>
-    </LinearLayout>
 
 
 </LinearLayout>
