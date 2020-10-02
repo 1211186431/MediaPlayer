@@ -29,6 +29,9 @@ import com.example.mediaplayer.songsdb.SongsDB;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * 歌单类表
+ */
 public class sheet extends AppCompatActivity {
     EditText e1;
     String sheet_id="";
@@ -291,6 +294,8 @@ public class sheet extends AppCompatActivity {
             }
         });
     }
+
+    //接数据
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -303,7 +308,7 @@ public class sheet extends AppCompatActivity {
                     new Intent(sheet.this,MainActivity.class);
             intent.putExtra("song_id",id);
             intent.putExtra("sheet_id",sheet_id);
-            setResult(1,intent);
+            setResult(1,intent);  //获取后二传
             finish();
         }
     }

@@ -37,6 +37,9 @@ import com.example.mediaplayer.songsdb.SongsDB;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * 歌单里的歌曲列表
+ */
 public class list extends AppCompatActivity {
      EditText e1;
     EditText e2 ;
@@ -338,6 +341,7 @@ public class list extends AppCompatActivity {
             }
         });
 
+        //监听事件，传回数据
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -345,7 +349,7 @@ public class list extends AppCompatActivity {
                 String id=txtId.getText().toString();
 
                 Intent intent=
-                        new Intent(list.this,sheet.class);
+                        new Intent(list.this,sheet.class);  //没有直接传回去，传sheet。直接传有问题
                 intent.putExtra("song_id",id);
                 intent.putExtra("sheet_id",sheet_id);
                 Log.v("Tag","1+"+id);
