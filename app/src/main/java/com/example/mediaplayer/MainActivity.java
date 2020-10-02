@@ -35,7 +35,6 @@ import java.util.Random;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "myTag";
     private MediaPlayer mediaPlayer;
     String music_name = "Carly Rae Jepsen - I Really Like You";
     String music_state = "正在播放";
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     String song_id = "";                                    //初始可以随便找一个放，没有放really like you
     String sheet_id = "";
     String path = "/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.mp3";
+    String path2="/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.lrc";
     SeekBar seekBar;
     int istouch = 1;
     String i1[]={"列表"};
