@@ -265,8 +265,8 @@ public class sheet extends AppCompatActivity {
                 if (TextUtils.isEmpty(newText)){
                     refreshSheetList(sheetDB);
                 }else{
-                    SongsDB songsDB2=new SongsDB(sheet.this);
-                    ArrayList<Map<String, String>> items = songsDB2.SearchUseSql(newText);
+                    SheetDB sheetDB2=new SheetDB(sheet.this);
+                    ArrayList<Map<String, String>> items = sheetDB2.SearchUseSql(newText);
                     SimpleAdapter adapter = new SimpleAdapter(sheet.this, items, R.layout.item,
                             new String[]{Songs.sheet._ID, Songs.sheet.COLUMN_NAME_sname},
                             new int[]{R.id.textId, R.id.textViewWord});

@@ -122,10 +122,10 @@ public class SongsDB {
     }
 
     //查找
-    public ArrayList<Map<String, String>> SearchUseSql(String strSongSearch) {
+    public ArrayList<Map<String, String>> SearchUseSql(String strSongSearch,String sheet) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sql = "select * from songs where name like ? order by name desc";
-        Cursor c = db.rawQuery(sql, new String[]{"%" + strSongSearch + "%"});
+        String sql = "select * from songs where name like ? and sheet = ? order by name desc";
+        Cursor c = db.rawQuery(sql, new String[]{"%" + strSongSearch + "%",sheet});
         return ConvertCursor2SongList(c);
     }
     //更新单词

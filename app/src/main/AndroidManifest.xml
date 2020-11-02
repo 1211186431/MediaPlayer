@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".sheet"></activity>
-        <activity android:name=".list"></activity>
+        <activity android:name=".list"></activity><!-- sd卡的权限-->
         <activity android:name=".insert" />
 
         <service

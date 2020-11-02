@@ -51,6 +51,7 @@ public class list extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
         Intent intent=getIntent();
         sheet_id=intent.getStringExtra("sheet_id");
         SongsDB songsDB=new SongsDB(this);
@@ -326,7 +327,7 @@ public class list extends AppCompatActivity {
                     refreshSongsList(songsDB);
                 }else{
                     SongsDB songsDB2=new SongsDB(list.this);
-                    ArrayList<Map<String, String>> items = songsDB2.SearchUseSql(newText);
+                    ArrayList<Map<String, String>> items = songsDB2.SearchUseSql(newText,sheet_id);
                     SimpleAdapter adapter = new SimpleAdapter(list.this, items, R.layout.item,
                             new String[]{Songs.Song._ID, Songs.Song.COLUMN_NAME_name},
                             new int[]{R.id.textId, R.id.textViewWord});

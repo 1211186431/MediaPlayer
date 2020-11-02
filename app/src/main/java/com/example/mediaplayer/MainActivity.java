@@ -2,11 +2,16 @@ package com.example.mediaplayer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -40,8 +45,8 @@ import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements LrcView.MedCallBack {
     private MediaPlayer mediaPlayer;
-    String music_name = "Carly Rae Jepsen - I Really Like You";
-    String music_state = "正在播放";
+//    String music_name = "Carly Rae Jepsen - I Really Like You";
+//    String music_state = "正在播放";
     Stack<String> allsong;
 
     private boolean timeFlag = true;
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements LrcView.MedCallBa
     String song_id = "";                                    //初始可以随便找一个放
     String sheet_id = "";
    // String path = "/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.mp3";
-    String Path2="/storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.lrc";
+    String Path2="";///storage/emulated/0/music_2/Good Time - Owl City,Carly Rae Jepsen.lrc
     SeekBar seekBar;
     int istouch = 1;
     String i1[]={"列表"};
@@ -97,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements LrcView.MedCallBa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        int hasWriteStoragePermission2 = ContextCompat.checkSelfPermission(getApplication(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (hasWriteStoragePermission2 == PackageManager.PERMISSION_GRANTED) {
+        }else{
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        }
         Spinner spinner = (Spinner) findViewById(R.id.spring_Loop);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -112,11 +122,18 @@ public class MainActivity extends AppCompatActivity implements LrcView.MedCallBa
             }
         });
         song_name =findViewById(R.id.song_name);
-        final Intent intent = new Intent(MainActivity.this, PlayService.class);  //开始是防止后台杀程序的，现在好像不用
-        intent.putExtra("music_name", music_name);
-        intent.putExtra("music_state", music_state);
+//        final Intent intent = new Intent(MainActivity.this, PlayService.class);  //开始是防止后台杀程序的，现在好像不用
+//        intent.putExtra("music_name", music_name);
+//        intent.putExtra("music_state", music_state);
+
+
         //startService(intent);
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//           startForegroundService(intent);
+//        } else {
+//            startService(intent);
+//        }
         final Button buttonup = (Button) findViewById(R.id.buttonup);
         final Button buttonPause = (Button) findViewById(R.id.buttonPause);
         final Button buttondown = (Button) findViewById(R.id.buttondown);
@@ -240,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements LrcView.MedCallBa
         try {
             mediaPlayer.reset();
             AssetManager assetManager = getAssets();  //初始随便设的
-            AssetFileDescriptor assetFileDescriptor = assetManager.openFd("Good Time - Owl City,Carly Rae Jepsen.mp3");
+            AssetFileDescriptor assetFileDescriptor = assetManager.openFd("Sam Cardon David Arkenstone - Pride of the Seas.mp3");
             mediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
             allsong = new Stack<String>();
             allsong.push("");
